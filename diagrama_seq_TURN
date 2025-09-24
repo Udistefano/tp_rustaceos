@@ -1,0 +1,46 @@
+@startuml
+participant Client
+participant NAT
+participant TURN_Server
+participant Peer
+
+==Setting Up the Relay Transport Address==
+
+Client -> NAT: Allocation Request
+NAT --> TURN_Server: Allocation Request 
+TURN_Server -> NAT: Allocation Successful
+NAT -> Client : Allocation Successful
+
+Client -> NAT: CreatePermissions Request
+NAT --> TURN_Server: CreatePermissions Request
+TURN_Server -> NAT: CreatePermissions Success
+NAT -> Client : CreatePermissions Success 
+
+==Sending Data to peer (Without Channels)==
+
+Client -> NAT: Send Indication 
+NAT --> TURN_Server: Send Indication
+TURN_Server -> Peer: UDP datagram 
+
+==Receiving Data from peer (Without Channerls)==
+
+Peer -> TURN_Server: UDP datagram
+TURN_Server -> NAT: Data Indication
+NAT -> Client : Data Indication
+
+==Setting up a Channel for the Peer==
+Client -> NAT: ChannelBind Request
+NAT -> TURN_Server: ChannelBind Request
+TURN_Server -> NAT: ChannelBind Success
+NAT -> Client: ChannelBind Success
+
+==Sending Data to peer (Using Channels)==
+Client -> NAT: ChannelData Message
+NAT -> TURN_Server: ChannelData Message
+TURN_Server -> Peer: UDP datagram
+
+==Relaying Data from the Peer (Using Channels)==
+Peer -> TURN_Server : UDP datagram
+TURN_Server -> NAT : ChannelData Message
+NAT -> Client : ChannelData Message
+@enduml
