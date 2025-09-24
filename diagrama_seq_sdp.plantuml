@@ -1,0 +1,29 @@
+@startuml
+
+class SessionDescription {
+    + session_id: String
+    + session_version: u32
+    + media_descriptions: Vec<MediaDescription>
+    + nueva_oferta(session_id: &str, session_version: u32, media: DescripcionMedios)
+    + parsear_cadena(texto_sdp: &str): Result<Self, String>
+    + to_string(): String
+}
+
+class MediaDescription {
+    + meadia_type: String
+    + puerto: u16
+    + protocolo: String
+    + formatos: String
+    + atributos: HashMap<String, String>
+}
+
+class FuncionesAuxiliares {
+    - parsear_linea(linea: &str): Result<(&str, &str), String>
+    - parsear_linea_origen(valor: &str, info_sesion: &mut DescripcionSesion): Result<(), String>
+    - parsear_medio(valor: &str, lineas: &mut Lines): Result<DescripcionMedios, String>
+}
+
+SessionDescription "1" o-- "0..*" MediaDescription : contiene
+SessionDescription ..> FuncionesAuxiliares : <<utiliza>>
+
+@enduml
